@@ -24,10 +24,11 @@ class MapScreen extends StatelessWidget {
         options: MapOptions(
           center: LatLng(37.54189, 127.07767),
           maxBounds: LatLngBounds(
-              LatLng(37.5453, 127.0697), LatLng(37.5370, 127.0830)),
+              LatLng(37.5461, 127.0693), LatLng(37.5359, 127.0840)),
           zoom: 17.0,
-          minZoom: 15.0,
-          maxZoom: 19.0,
+          minZoom: 14.0,
+          maxZoom: 18.0,
+          interactiveFlags: InteractiveFlag.all & ~InteractiveFlag.rotate,
         ),
         children: [
           TileLayer(urlTemplate: MapTileURL + '{z}/{x}/{y}.png'),
