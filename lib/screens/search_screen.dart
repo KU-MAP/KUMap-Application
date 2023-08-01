@@ -59,45 +59,47 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     return PlatformScaffold(
-        body: Padding(
-            padding: EdgeInsets.symmetric(
-              vertical: 8.h,
-            ),
-            child: Column(
-              children: [
-                Padding(
-                    padding: EdgeInsets.only(top: 2.h, left: 20.w, right: 20.w),
-                    child: CustomSearchBar(
-                      searchController: _searchController,
-                      onChanged: _onChangeHandler,
-                      onPressedBack: _onPressedBack,
-                      onPressedClear: _onPressedClear,
-                    )),
-                Padding(
-                  padding: EdgeInsets.only(
-                    top: 12.h,
-                  ),
-                  child: Container(
-                    color: AppColors.primaryDark,
-                    height: 5.h,
-                  ),
+        body: SafeArea(
+            child: Padding(
+                padding: EdgeInsets.symmetric(
+                  vertical: 8.h,
                 ),
-                Expanded(
-                    child: Padding(
-                  padding: EdgeInsets.only(
-                    top: 10.h,
-                    left: 20.w,
-                    right: 20.w,
-                  ),
-                  child: ListView.builder(
-                      itemCount: _searchResult.length,
-                      itemBuilder: (context, index) {
-                        return PlatformListTile(
-                          title: Text(_searchResult[index].name),
-                        );
-                      }),
-                )),
-              ],
-            )));
+                child: Column(
+                  children: [
+                    Padding(
+                        padding:
+                            EdgeInsets.only(top: 2.h, left: 20.w, right: 20.w),
+                        child: CustomSearchBar(
+                          searchController: _searchController,
+                          onChanged: _onChangeHandler,
+                          onPressedBack: _onPressedBack,
+                          onPressedClear: _onPressedClear,
+                        )),
+                    Padding(
+                      padding: EdgeInsets.only(
+                        top: 12.h,
+                      ),
+                      child: Container(
+                        color: AppColors.primaryDark,
+                        height: 5.h,
+                      ),
+                    ),
+                    Expanded(
+                        child: Padding(
+                      padding: EdgeInsets.only(
+                        top: 10.h,
+                        left: 20.w,
+                        right: 20.w,
+                      ),
+                      child: ListView.builder(
+                          itemCount: _searchResult.length,
+                          itemBuilder: (context, index) {
+                            return PlatformListTile(
+                              title: Text(_searchResult[index].name),
+                            );
+                          }),
+                    )),
+                  ],
+                ))));
   }
 }
