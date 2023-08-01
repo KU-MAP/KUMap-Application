@@ -3,10 +3,16 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:animations/animations.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
+
+import 'package:kumap/constants/colors.dart';
+import 'package:kumap/components/custom_search_bar_read_only.dart';
+import 'package:kumap/screens/search_screen.dart';
 
 class MapScreen extends StatefulWidget {
   @override
@@ -16,6 +22,7 @@ class MapScreen extends StatefulWidget {
 class _MapScreenState extends State<MapScreen> {
   late FollowOnLocationUpdate _followOnLocationUpdate;
   late StreamController<double?> _followCurrentLocationStreamController;
+  final TextEditingController _searchController = TextEditingController();
 
   final mapController = MapController();
 
@@ -37,11 +44,8 @@ class _MapScreenState extends State<MapScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return PlatformScaffold(
-      appBar: PlatformAppBar(
-        title: Text('Map'),
-      ),
-      body: FlutterMap(
+    return Stack(children: [
+      FlutterMap(
         mapController: mapController,
         options: MapOptions(
           center: LatLng(37.54189, 127.07767),
@@ -61,6 +65,22 @@ class _MapScreenState extends State<MapScreen> {
           ),
         ],
       ),
-    );
+      SafeArea(
+          child: Padding(
+              padding: EdgeInsets.only(top: 10.h, left: 20.w, right: 20.w),
+              child: OpenContainer(
+                transitionDuration: Duration(milliseconds: 500),
+                transitionType: ContainerTransitionType.fade,
+                openBuilder: (context, action) => SearchScreen(),
+                closedShape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16.0),
+                ),
+                closedBuilder: (context, action) => CustomSearchBarReadOnly(
+                  onTap: action,
+                  prefixIcon: Icon(Icons.search, color: AppColors.primary),
+                  searchController: _searchController,
+                ),
+              )))
+    ]);
   }
 }
