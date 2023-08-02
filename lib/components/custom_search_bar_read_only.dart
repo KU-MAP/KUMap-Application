@@ -5,14 +5,15 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 class CustomSearchBarReadOnly extends StatelessWidget {
   TextEditingController searchController;
   String placeholder;
-  Icon? prefixIcon;
+  PlatformIconButton? prefixIcon;
   Function() onTap;
 
-  CustomSearchBarReadOnly(
-      {required this.searchController,
-      this.placeholder = '여기서 장소 검색',
-      this.prefixIcon,
-      required this.onTap});
+  CustomSearchBarReadOnly({
+    required this.searchController,
+    this.placeholder = '여기서 장소 검색',
+    this.prefixIcon,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -34,9 +35,7 @@ class CustomSearchBarReadOnly extends StatelessWidget {
             borderRadius: BorderRadius.circular(16.0),
             borderSide: BorderSide.none,
           ),
-          prefixIcon: (prefixIcon != null)
-              ? PlatformIconButton(materialIcon: prefixIcon)
-              : null,
+          prefixIcon: prefixIcon,
         ),
       ),
       cupertino: (_, __) => CupertinoTextFieldData(
@@ -54,11 +53,7 @@ class CustomSearchBarReadOnly extends StatelessWidget {
             ),
           ],
         ),
-        prefix: (prefixIcon != null)
-            ? PlatformIconButton(
-                cupertinoIcon: prefixIcon,
-              )
-            : null,
+        prefix: prefixIcon,
       ),
     );
   }

@@ -11,7 +11,9 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 
 import 'package:kumap/constants/colors.dart';
+import 'package:kumap/models/osm_model.dart';
 import 'package:kumap/components/custom_search_bar_read_only.dart';
+import 'package:kumap/components/osm_marker.dart';
 import 'package:kumap/screens/search_screen.dart';
 
 class MapScreen extends StatefulWidget {
@@ -26,8 +28,26 @@ class _MapScreenState extends State<MapScreen> {
 
   final mapController = MapController();
 
+  bool _isQueryResultVisible = false;
+  List<OSMNode> data = [];
+
   String MapTileURL = (dotenv.env['SERVER_URL'] as String) +
       (dotenv.env['MAP_TILE_ENDPOINT'] as String);
+
+  void handleQuerySearchResult(List<OSMNode> result) {
+    setState(() {
+      data = result;
+      _isQueryResultVisible = true;
+    });
+  }
+
+  void ClearMarker() {
+    setState(() {
+      data = [];
+      _isQueryResultVisible = false;
+      _searchController.clear();
+    });
+  }
 
   @override
   void initState() {
@@ -39,6 +59,7 @@ class _MapScreenState extends State<MapScreen> {
   @override
   void dispose() {
     _followCurrentLocationStreamController.close();
+    _searchController.dispose();
     super.dispose();
   }
 
@@ -63,6 +84,9 @@ class _MapScreenState extends State<MapScreen> {
             followCurrentLocationStream:
                 _followCurrentLocationStreamController.stream,
           ),
+          MarkerLayer(
+            markers: data.map((node) => OSMMarker(node, () {})).toList(),
+          )
         ],
       ),
       SafeArea(
@@ -71,13 +95,28 @@ class _MapScreenState extends State<MapScreen> {
               child: OpenContainer(
                 transitionDuration: Duration(milliseconds: 500),
                 transitionType: ContainerTransitionType.fade,
-                openBuilder: (context, action) => SearchScreen(),
+                openBuilder: (context, action) => SearchScreen(
+                  searchController: _searchController,
+                  onSearchCompleted: handleQuerySearchResult,
+                ),
                 closedShape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16.0),
                 ),
                 closedBuilder: (context, action) => CustomSearchBarReadOnly(
                   onTap: action,
-                  prefixIcon: Icon(Icons.search, color: AppColors.primary),
+                  prefixIcon: _isQueryResultVisible
+                      ? PlatformIconButton(
+                          onPressed: ClearMarker,
+                          materialIcon: Icon(Icons.arrow_back_ios,
+                              color: AppColors.primary),
+                          cupertinoIcon: Icon(Icons.arrow_back_ios,
+                              color: AppColors.primary),
+                        )
+                      : PlatformIconButton(
+                          materialIcon:
+                              Icon(Icons.search, color: AppColors.primary),
+                          cupertinoIcon:
+                              Icon(Icons.search, color: AppColors.primary)),
                   searchController: _searchController,
                 ),
               )))

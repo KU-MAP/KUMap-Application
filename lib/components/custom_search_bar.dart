@@ -6,27 +6,33 @@ import 'package:kumap/constants/colors.dart';
 
 class CustomSearchBar extends StatelessWidget {
   TextEditingController searchController;
+  String placeholder;
   Function(String) onChanged;
+  Function(String) onSubmitted;
   Function() onPressedBack;
   Function() onPressedClear;
 
   CustomSearchBar(
       {required this.searchController,
+      this.placeholder = '여기서 장소 검색',
       required this.onChanged,
+      required this.onSubmitted,
       required this.onPressedBack,
       required this.onPressedClear});
 
   @override
   Widget build(BuildContext context) {
     return PlatformTextField(
+      autofocus: true,
       controller: searchController,
       onChanged: onChanged,
+      onSubmitted: onSubmitted,
       textInputAction: TextInputAction.search,
       material: (_, __) => MaterialTextFieldData(
         decoration: InputDecoration(
           filled: true,
           fillColor: Colors.white,
-          hintText: '여기서 장소 검색',
+          hintText: placeholder,
           contentPadding: EdgeInsets.zero,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16.0),
@@ -51,7 +57,7 @@ class CustomSearchBar extends StatelessWidget {
         ),
       ),
       cupertino: (_, __) => CupertinoTextFieldData(
-        placeholder: '여기서 장소 검색',
+        placeholder: placeholder,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
           color: Colors.white,
