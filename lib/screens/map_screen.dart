@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:animations/animations.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -65,6 +66,8 @@ class _MapScreenState extends State<MapScreen> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(
+        SystemUiOverlayStyle.dark.copyWith(statusBarColor: Colors.transparent));
     return Stack(children: [
       FlutterMap(
         mapController: mapController,
@@ -93,7 +96,7 @@ class _MapScreenState extends State<MapScreen> {
           child: Padding(
               padding: EdgeInsets.only(top: 10.h, left: 20.w, right: 20.w),
               child: OpenContainer(
-                transitionDuration: Duration(milliseconds: 500),
+                transitionDuration: Duration(milliseconds: 400),
                 transitionType: ContainerTransitionType.fade,
                 openBuilder: (context, action) => SearchScreen(
                   searchController: _searchController,
