@@ -7,6 +7,7 @@ import 'package:kumap/constants/colors.dart';
 class CustomSearchBar extends StatelessWidget {
   TextEditingController searchController;
   String placeholder;
+  FocusNode focusNode;
   Function(String) onChanged;
   Function(String) onSubmitted;
   Function() onPressedBack;
@@ -14,6 +15,7 @@ class CustomSearchBar extends StatelessWidget {
 
   CustomSearchBar(
       {required this.searchController,
+      required this.focusNode,
       this.placeholder = '여기서 장소 검색',
       required this.onChanged,
       required this.onSubmitted,
@@ -23,7 +25,7 @@ class CustomSearchBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PlatformTextField(
-      autofocus: true,
+      focusNode: focusNode,
       controller: searchController,
       onChanged: onChanged,
       onSubmitted: onSubmitted,

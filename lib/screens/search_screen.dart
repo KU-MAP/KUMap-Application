@@ -30,9 +30,11 @@ class _SearchScreenState extends State<SearchScreen> {
 
   List<OSMNode> _searchResult = [];
   Timer? searchOnStoppedTyping;
+  String? _previousSearchQuery;
+  late FocusNode _focusNode;
 
   _onChangeHandler(value) {
-    const duration = Duration(milliseconds: 400);
+    const duration = Duration(milliseconds: 300);
     if (searchOnStoppedTyping != null) {
       setState(() => searchOnStoppedTyping!.cancel());
     }
@@ -46,7 +48,9 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   _onPressedBack() {
-    if (_searchResult.isEmpty) {
+    if (_previousSearchQuery != null) {
+      widget.searchController.text = _previousSearchQuery!;
+    } else {
       widget.searchController.clear();
     }
     Navigator.pop(context);
@@ -66,16 +70,29 @@ class _SearchScreenState extends State<SearchScreen> {
     API.searchByQuery(value).then((data) => setState(() => {
           _searchResult = data,
           _searchResult.sort((a, b) => a.name.compareTo(b.name)),
-          widget.onSearchCompleted(_searchResult),
-          Navigator.pop(context),
+          if (_searchResult.isNotEmpty)
+            {
+              if (_searchResult.length == 1)
+                {
+                  widget.searchController.text = _searchResult[0].name,
+                },
+              if (!widget.singleResult || _searchResult.length == 1)
+                {
+                  widget.onSearchCompleted(_searchResult),
+                  Navigator.pop(context),
+                }
+            }
         }));
   }
 
   @override
   void initState() {
+    _focusNode = FocusNode();
+    _focusNode.requestFocus();
     super.initState();
     if (widget.searchController.text.isNotEmpty) {
-      _onChangeHandler(widget.searchController.text);
+      _previousSearchQuery = widget.searchController.text;
+      _onChangeHandler(_previousSearchQuery);
     }
   }
 
@@ -102,6 +119,7 @@ class _SearchScreenState extends State<SearchScreen> {
                             EdgeInsets.only(top: 2.h, left: 20.w, right: 20.w),
                         child: CustomSearchBar(
                           searchController: widget.searchController,
+                          focusNode: _focusNode,
                           onChanged: _onChangeHandler,
                           onPressedBack: _onPressedBack,
                           onPressedClear: _onPressedClear,
@@ -124,9 +142,18 @@ class _SearchScreenState extends State<SearchScreen> {
                         right: 20.w,
                       ),
                       child: ListView.builder(
+                          physics: BouncingScrollPhysics(
+                              parent: AlwaysScrollableScrollPhysics()),
                           itemCount: _searchResult.length,
                           itemBuilder: (context, index) {
                             return PlatformListTile(
+                              onTap: () => {
+                                widget.searchController.text =
+                                    _searchResult[index].name,
+                                widget
+                                    .onSearchCompleted([_searchResult[index]]),
+                                Navigator.pop(context),
+                              },
                               title: Text(_searchResult[index].name),
                             );
                           }),
